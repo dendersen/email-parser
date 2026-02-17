@@ -1,22 +1,23 @@
-from: 
+from->
 example@email.com
 
-to: 
+to->
 calender@dendersen.dk
 
-subject: 
-event
+subject->
+event*
 
-body:
-passphraseExampleForIdentityPurposes
+body->
+id: passphraseExampleForIdentityPurposes
 start: dd.mm.yyyy ##.##
 end: dd.mm.yyyy ##.##
 name: name/title of your amazing event
 location: building: 101, room: S-huset
-eventLink: external.link/to_event/like_facebook
+eventLink: optional.external.link/to_event/like_facebook
 ticketLink: optional.link/to_tickets
 description:
 a description of what will be going on at the event you are holding
 this is the only multi line part, notice nothing on the line that says description, anything else will give error
 in the future this will be rich text using a md parser, but for now just pure text
 the ticketLink line can either be empty or not present at all
+notice the star in the subject line, here you can put whatever you want, but it will not be used in calender, it is purely for your convinience
