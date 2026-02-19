@@ -1,17 +1,13 @@
-import enum
-import json
 from email_service.emailLib import emailHandler 
 from email_service.emailReader import email
-from enum import Enum
 from event import createEvent
 from shared import *
-import os
 
 userName,password,service_in,service_out = (line.strip() for line in open(".secret.key").readlines())
 emailService = emailHandler(userName, password, service_in, service_out)
-getPassPhrases:list[email] = emailService.specific("secrets", "calender@dendersen.dk")
-passphrases = {}
-reserved_keys = ["subject", "sender", "errors","_JSON_PATH_"]
+getPassPhrases:list[email] = emailService.specific("secrets", userName)
+passphrases = {"dendersen@endersen.dk": "dendersen123"} #test passphrase, should be replaced with actual passphrases from getPassPhrases
+reserved_keys = ["subject", "sender", "errors"]
 
 for mail in getPassPhrases:
   if("_passphrase_" in mail.subject.lower()):

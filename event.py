@@ -1,5 +1,5 @@
-from email_service.emailReader import email
 from shared import *
+import os
 
 def parseTime(timeStr: str) -> tuple[int,int,int,int,int] | str:
   if(len(timeStr.strip().split(" ")) != 2):
@@ -20,6 +20,14 @@ def createEvent(mail: emailFields) -> bool:
   if not mail["subject"].lower().startswith("event"):
     return False
   
+  if not "id" in mail:
+    print("missing event id in email from {}".format(mail["sender"]))
+    return False
+  
+  if not "sender" in mail:
+    print("missing sender in email from {}".format(mail["sender"]))
+    return False
+  
   if not "start" in mail or not "end" in mail:
     print("missing start or end time in email from {}".format(mail["sender"]))
     return False
@@ -36,6 +44,15 @@ def createEvent(mail: emailFields) -> bool:
     print("missing event description in email from {}".format(mail["sender"]))
     return False
   
+  if not "eventLink" in mail:
+    mail["eventLink"] = ""
   
+  if not "ticketLink" in mail:
+    mail["ticketLink"] = ""
+  
+  os.makedirs("./events/{}".format(mail["sender"]), exist_ok=True)
+  fileName = str(hash(str(mail)))[0:10]
+  with open("./events/{}/{}_parsed.email".format(mail["sender"], fileName), "w") as f:
+    f.write(str(mail))
   
   return True
