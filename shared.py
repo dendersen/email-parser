@@ -8,12 +8,13 @@ class emailFields:
     self.final = []
     self.iterIndex = 0
   
-  def fromString(self, string: str) -> "emailFields":
+  def fromString(self, string: str, id:str) -> "emailFields":
     self.data = {}
     self.errors = []
     self.finalKey = None
     self.final = []
     self.iterIndex = 0
+    self.data["id"] = id
     for line in string.split("\n"):
       key, value = line.split(": ", 1)
       self.data[key.strip().lower()] = value.replace("%\\n", "\n").strip()
@@ -21,17 +22,23 @@ class emailFields:
   
   def __getitem__(self, key:str) -> str:
     if key.startswith("errors"):
-      key,index = key.split("_")
-      if not index is None:
-        return self.errors[int(index)]
+      key,index = key.split("_",1)
+      if("_" in key):
+        if not index is None:
+          return self.errors[int(index)]
+        else:
+          return self.errors[0]
       else:
-        return self.errors[0]
-    elif key == self.finalKey:
-      key,index = key.split("_")
-      if not index is None:
-        return self.final[int(index)]
+          return "\n".join(self.final)
+    elif self.finalKey is not None and key.startswith(self.finalKey):
+      if "_" in key:
+        key,index = key.split("_",1)
+        if not index is None:
+          return self.final[int(index)]
+        else:
+          return self.final[0]
       else:
-        return self.final[0]
+        return "\n".join(self.final)
     return self.data[key]
   
   def __setitem__(self, key:str, value:str | list[str]):
@@ -76,6 +83,13 @@ class emailFields:
   
   def __str__(self) -> str:
     string = ""
-    for key in self:
+    for key in self.data:
+      if key == "id":
+        continue
       string += key + ": " + self[key].replace("\n", "%\\n") + "\n"
+    for i, e in enumerate(self.errors):
+      string += "errors_{}: ".format(i) + e.replace("\n", "%\\n") + "\n"
+    if self.finalKey is not None:
+      for i, f in enumerate(self.final):
+        string += self.finalKey + "_{}: ".format(i) + f.replace("\n", "%\\n") + "\n"
     return string

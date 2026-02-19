@@ -9,8 +9,8 @@ event*
 
 body->
 id: passphraseExampleForIdentityPurposes
-start: dd.mm.yyyy ##.##
-end: dd.mm.yyyy ##.##
+start: 13.09.2003 13.00
+end: 13.09.2003 18.00
 name: name/title of your amazing event
 location: building: 101, room: S-huset
 eventLink: optional.external.link/to_event/like_facebook

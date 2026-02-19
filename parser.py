@@ -5,10 +5,10 @@ from shared import *
 
 userName,password,service_in,service_out = (line.strip() for line in open(".key.secret").readlines())
 emailService = emailHandler(userName, password, service_in, service_out)
-getPassPhrases:list[email] = emailService.specific("secrets", userName)
 passphrases = {"dendersen@endersen.dk": "dendersen123"} #test passphrase, should be replaced with actual passphrases from getPassPhrases
 reserved_keys = ["subject", "sender", "errors"]
 
+getPassPhrases:list[email] = emailService.specificList("inbox.secrets", userName)
 for mail in getPassPhrases:
   if("_passphrase_" in mail.subject.lower()):
     passphrase, user = mail.body.strip().split("\n")
@@ -34,7 +34,6 @@ def parseEmail(email: email) -> emailFields:
   final = None
   emailContent["subject"] = email.subject.strip().lower()
   emailContent["sender"] = email.sender.strip().lower()
-  emailContent["errors"] = []
   for line in email.body.strip().split("\n"):
     if(final is not None):
       emailContent[final] = line.strip()
@@ -52,16 +51,18 @@ def parseEmail(email: email) -> emailFields:
         print("reserved key used in line: {}".format(line))
         emailContent["errors"] = "reserved key used in line: {}".format(line)
         continue
-      emailContent[key.strip().lower()] = value.strip()
-      if(value == ""):
-        key.strip().lower()
+      if value.strip() == "":
         final = key.strip().lower()
         emailContent.setFinal(final)
-        emailContent[final] = value.strip()
+      else:
+        emailContent[key.strip().lower()] = value.strip()
   return emailContent
 
 def handleEmail(mail: email) -> bool:
   emailContent = parseEmail(mail)
+  if "sender" not in emailContent or "id" not in emailContent or "subject" not in emailContent:
+    print("missing required fields in email from {}".format(mail.sender))
+    return False
   if not validateUser(emailContent["sender"], emailContent["id"]):
     print("invalid user or passphrase from {}".format(emailContent["sender"]))
     return False
@@ -69,3 +70,13 @@ def handleEmail(mail: email) -> bool:
   if emailContent["subject"].startswith("event"):
     return createEvent(emailContent)
   return False #no other email types are supported yet
+
+if __name__ == "__main__":
+  #while True:
+  emailService.specific("inbox") #update inbox to get new emails
+  for mail in emailService.getAllEmails(False):
+    print("handling email from {}".format(mail.sender))
+    if handleEmail(mail):
+      print("email handled successfully")
+    else:
+      print("failed to handle email from {}".format(mail.sender))
