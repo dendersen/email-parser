@@ -9,9 +9,9 @@ passphrases = {"dendersen@endersen.dk": "dendersen123"} #test passphrase, should
 reserved_keys = ["subject", "sender", "errors"]
 
 getPassPhrases:list[email] = emailService.specificList("inbox.secrets", userName)
-for mail in getPassPhrases:
-  if("_passphrase_" in mail.subject.lower()):
-    passphrase, user = mail.body.strip().split("\n")
+for PassPhraseMail in getPassPhrases:
+  if("_passphrase_" in PassPhraseMail.subject.lower()):
+    passphrase, user = PassPhraseMail.body.strip().split("\n")
     passphrase = passphrase.strip()
     user = user.strip()
     if(passphrase and user):
@@ -23,8 +23,8 @@ for mail in getPassPhrases:
       print("missing user with passphrase: {}".format(passphrase))
     else:
       print("missing user and passphrase in email:")
-      print("subject: {}".format(mail.subject))
-      print("body: {}".format(mail.body))
+      print("subject: {}".format(PassPhraseMail.subject))
+      print("body: {}".format(PassPhraseMail.body))
 
 def validateUser(user: str, passphrase: str) -> bool:
   return user in passphrases and passphrases[user] == passphrase
