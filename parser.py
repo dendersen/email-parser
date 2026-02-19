@@ -78,5 +78,6 @@ if __name__ == "__main__":
     print("handling email from {}".format(mail.sender))
     if handleEmail(mail):
       print("email handled successfully")
+      mail.markAsRead() #mark email as read if it was handled successfully
     else:
       print("failed to handle email from {}".format(mail.sender))
