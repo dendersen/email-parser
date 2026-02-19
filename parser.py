@@ -3,7 +3,7 @@ from email_service.emailReader import email
 from event import createEvent
 from shared import *
 
-userName,password,service_in,service_out = (line.strip() for line in open(".secret.key").readlines())
+userName,password,service_in,service_out = (line.strip() for line in open(".key.secret").readlines())
 emailService = emailHandler(userName, password, service_in, service_out)
 getPassPhrases:list[email] = emailService.specific("secrets", userName)
 passphrases = {"dendersen@endersen.dk": "dendersen123"} #test passphrase, should be replaced with actual passphrases from getPassPhrases
