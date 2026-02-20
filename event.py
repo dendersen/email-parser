@@ -5,6 +5,83 @@ import time as T
 def isLeapYear(year: int) -> bool:
   return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
+def daysInMonth(month:int,year:int) -> int:
+  if int(month) in [4,6,9,11]: 
+    return 30 
+  if int(month) == 2 and isLeapYear(int(year)):
+    return 29
+  if int(month) == 2 and not isLeapYear(int(year)):
+    return 28
+  return 31
+
+class time:
+  def __init__(self, year: int, month: int,day: int, hour: int,minute: int) -> None:
+    self.year = year
+    self.month = month
+    self.day = day
+    self.hour = hour
+    self.minute = minute
+    if not self:
+      raise Exception("invalid date")
+  
+  def copy(self)->"time":
+    t = time(self.year,self.month,self.day,self.hour,self.minute)
+    return t
+  
+  def __sub__(self, other:"time") -> "time":
+    t = time(0,0,0,0,0)
+    
+    t.minute = self.minute - other.minute
+    t.hour   = self.hour   - other.hour
+    t.day    = self.day    - other.day
+    t.month  = self.month  - other.month
+    t.year   = self.year   - other.year  
+    
+    if t.minute <= 0:
+      t.minute += 60
+      t.hour -= 1
+    
+    if t.hour <= 0:
+      t.hour += 24
+      t.day -= 1
+    
+    if t.day <= 0:
+      t.month -= 1
+      if t.month <= 0:
+        t.month += 12
+        t.year -= 1
+      t.day += daysInMonth(t.month,t.year)
+    
+    return t
+  
+  def __bool__(self) -> bool:
+    if self.year <= 0:
+      return False
+    if self.month <= 0:
+      return False
+    if self.month > 12:
+      return False
+    if self.day <= 0:
+      return False
+    if self.day > daysInMonth(self.month, self.year):
+      return False
+    if self.hour <= 0:
+      return False
+    if self.hour > 24:
+      return False
+    return True
+
+class event:
+  def __init__(self, description:str, startTime: time, endTime:time, name:str, locataion:str, host:str, eventLink:str | None = None, ticketLink: str | None = None) -> None:
+    self.description = description
+    self.startTime =   startTime
+    self.endTime =     endTime
+    self.name =        name
+    self.locataion =   locataion
+    self.host =        host
+    self.eventLink =   eventLink
+    self.ticketLink =  ticketLink
+  
 def parseTime(timeStr: str) -> tuple[int,int,int,int,int] | str:
   if(len(timeStr.strip().split(" ")) != 2):
     return "invalid date time format"

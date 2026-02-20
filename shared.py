@@ -2,10 +2,10 @@ generalEmailFields = ["subject", "sender", "id", "errors"]
 
 class emailFields:
   def __init__(self):
-    self.data = {}
-    self.errors = []
+    self.data:dict[str,str] = {}
+    self.errors:list[str] = []
     self.finalKey: str | None = None
-    self.final = []
+    self.final: list[str] = []
     self.iterIndex = 0
   
   def fromString(self, string: str, id:str) -> "emailFields":
@@ -24,7 +24,7 @@ class emailFields:
     if key.startswith("errors"):
       key,index = key.split("_",1)
       if("_" in key):
-        if not index is None:
+        if int(index) > -1:
           return self.errors[int(index)]
         else:
           return self.errors[0]
@@ -33,7 +33,7 @@ class emailFields:
     elif self.finalKey is not None and key.startswith(self.finalKey):
       if "_" in key:
         key,index = key.split("_",1)
-        if not index is None:
+        if int(index) > -1:
           return self.final[int(index)]
         else:
           return self.final[0]
@@ -41,7 +41,7 @@ class emailFields:
         return "\n".join(self.final)
     return self.data[key]
   
-  def __setitem__(self, key:str, value:str | list[str]):
+  def __setitem__(self, key:str, value:str):
     if key == "errors":
       self.errors.append(value)
     elif key == self.finalKey:
@@ -64,19 +64,18 @@ class emailFields:
   def __next__(self) -> str:
     if self.iterIndex < len(self.data):
       key = list(self.data.keys())[self.iterIndex]
-      value = self.data[key]
       self.iterIndex += 1
       return key
     
     elif self.iterIndex < len(self.data) + len(self.errors):
-      error = self.errors[self.iterIndex - len(self.data)]
+      key = self.iterIndex - len(self.data) - 1
       self.iterIndex += 1
-      return "errors_" + str(self.iterIndex - len(self.data) - 1)
+      return "errors_" + str(key)
     
     elif self.finalKey is not None and self.iterIndex < len(self.data) + len(self.errors) + len(self.final):
-      final = self.final[self.iterIndex - len(self.data) - len(self.errors)]
+      key = self.iterIndex - len(self.data) - len(self.errors) - 1
       self.iterIndex += 1
-      return self.finalKey + "_" + str(self.iterIndex - len(self.data) - len(self.errors) - 1)
+      return self.finalKey + "_" + str(key)
     
     else:
       raise StopIteration
