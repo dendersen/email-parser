@@ -1,2 +1,3 @@
 helpSystem
 event: yes
+help: anything other than "yes" will provide no response
