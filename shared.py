@@ -1,5 +1,7 @@
 generalEmailFields = ["subject", "sender", "id", "errors"]
 
+reserved_keys = ["subject", "sender", "errors"]
+
 class emailFields:
   def __init__(self):
     self.data:dict[str,str] = {}

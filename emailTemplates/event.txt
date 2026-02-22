@@ -1,16 +1,7 @@
-from->
-example@email.com
-
-to->
-calender@dendersen.dk
-
-subject->
-event*
-
-body->
+event_example
 id: passphraseExampleForIdentityPurposes
-start: 13.09.2003 13.00
-end: 13.09.2003 18.00
+start: 13.09.2026 13.00
+end: 14.09.2026 04.00
 name: name/title of your amazing event
 location: building: 101, room: S-huset
 eventLink: optional.external.link/to_event/like_facebook
