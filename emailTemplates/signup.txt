@@ -1,0 +1,6 @@
+signup_what you will be called
+sign: your.email.here@for.security
+target:
+emails@for.those
+you@want.to
+recieve@mails.from

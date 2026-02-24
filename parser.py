@@ -5,7 +5,7 @@ from shared import *
 from help import handleHelpEmail
 
 __emailService = emailHandler("", "", "", "") #placeholder, should be unlocked with unlockEmailService before use
-__passphrases = {} #empty, shopuld be updated with updatePassPhrases before use
+__passphrases:dict[str,str] = {} #empty, shopuld be updated with updatePassPhrases before use
 __userName = ""
 
 def unlockEmailService(keyPath: str):
@@ -92,7 +92,7 @@ def parseEmail(email: email) -> emailFields:
 def forgetPassPhrases():
   global __passphrases
   for user in __passphrases:
-    __passphrases[user] = None
+    __passphrases[user] = ""
   __passphrases = {}
 
 def handleEmail(emailContent:emailFields, prevalidated: bool = False) -> bool:
@@ -132,3 +132,11 @@ def parseEmailList(emails: list[email] | None) -> list[emailFields]:
 def readInbox(unreadOnly: bool = True) -> list[email]:
   __emailService.specific("inbox", unread = unreadOnly) #update inbox to get new emails
   return [* __emailService.getAllEmails(False)]
+
+if __name__ == "__main__":
+  unlockEmailService("./.key.secret")
+  updatePassPhrases() #update passphrases to get new passphrases
+  emails: list[email] = readInbox(True)
+  parsedEmails: list[emailFields] = parseEmailList(emails)
+  successMask = handleEmailList(parsedEmails)
+  lockEmailService() #lock email service when done to prevent unauthorized access

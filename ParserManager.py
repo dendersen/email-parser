@@ -1,8 +1,8 @@
 from parser import parseEmailList, unlockEmailService, updatePassPhrases,readInbox,forgetPassPhrases, validateEmailList, handleEmailList, lockEmailService
 from email_service.emailReader import email
-from shared import emailFields
+from shared import emailFields as EmailFields
 
-def parseInbox(keyLocation:str | None, logOutOnFinish: bool = True, unreadOnly=True, markReadOnSuccess: bool = True, markReadOnFailure: bool = False) -> None:
+def parseInbox(keyLocation:str | None, logOutOnFinish: bool = True, unreadOnly:bool=True, markReadOnSuccess: bool = True, markReadOnFailure: bool = False, saveDestination:str = ".") -> None:
   """a single function to deal with all the email parsing nonsens at once
   some parser functions print status when they are done
   prints own status when done
@@ -11,10 +11,13 @@ def parseInbox(keyLocation:str | None, logOutOnFinish: bool = True, unreadOnly=T
       keyLocation (str | None): location of key file to unlock email service, if None the email service is assumed to be already unlocked
       unreadOnly (bool, optional): whether to only read unread emails. Defaults to True.
   """
+  
+  saveDestination = saveDestination
+  
   if keyLocation is not None:
     unlockEmailService(keyLocation) #unlock email service if not unlocked
   emails: list[email] = readInbox(unreadOnly)
-  parsedEmails: list[emailFields] = parseEmailList(emails)
+  parsedEmails: list[EmailFields] = parseEmailList(emails)
   updatePassPhrases() #update passphrases to get new passphrases
   validMask = validateEmailList(parsedEmails)
   forgetPassPhrases() #forget passphrases after reading inbox for security reasons
