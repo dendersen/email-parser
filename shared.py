@@ -1,9 +1,14 @@
-generalEmailFields = ["subject", "sender", "id", "errors"]
 
-reserved_keys = ["subject", "sender", "errors"]
+generalEmailFields = ["subject", "sender", "id", "errors"] 
+#general fields that are used in all internal system emails, and should often be reserved for the system. 
+#"id" is used for passphrase validation, and "errors" is used for error reporting.
 
-existingUsers = ["de@endersen.dk"]
-saveDestination = "."
+reserved_keys = ["subject", "sender", "errors"] #special fields that are reserved for the system, and cannot be used by users in their emails. 
+#"id" is not reserved as not all emails need passphrases, only those that program outputs to other users
+
+existingUsers = ["de@endersen.dk"] #test user, should be cleared when reading from a user file
+teamName = "calenderBot"
+saveDestination = "." #should be overriden when activating a system, but doesn't have to be
 
 class emailFields:
   def __init__(self):

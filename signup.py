@@ -1,4 +1,7 @@
 from shared import *
+import os
+
+signupDestination = "signups"
 
 class signup:
   def __init__(self,emailTo:str, nameOfPerson:str, emailFrom:str) -> None:
@@ -13,7 +16,7 @@ class signup:
     out += self.emailFrom
     return out.strip()
 
-def checkSignup(mail: emailFields) -> bool:
+def checkSignup(mail: emailFields, mailPool:list[emailFields]) -> bool:
   if not mail["subject"].lower().startswith("signup"):
     return False
   
@@ -43,16 +46,40 @@ def checkSignup(mail: emailFields) -> bool:
     name = mail["sender"].split("@",1)[0]
   
   targets:list[str] = []
-  for target in mail["target"]:
-    targets.append(target)
+  for internal_user in mail["target"]:
+    targets.append(internal_user)
   
   email = mail["sign"]
   
   signup_objs:list[signup] = []
-  for target in targets:
-    signup_objs.append(signup(email,name,target))
+  for internal_user in targets:
+    signup_objs.append(signup(email,name,internal_user))
   
+  generalPath = os.path.join(saveDestination,signupDestination)
+  
+  newSignup = False
   for signup_obj in signup_objs:
-    pass
+    path = os.path.join(generalPath,signup_obj.emailFrom)
+    fileName = signup_obj.emailTo + "_" + signup_obj.name + ".txt"
+    os.makedirs(path, exist_ok=True)
+    fullPath = os.path.join(path,fileName)
+    if not os.path.isfile(fullPath):
+      with open(fullPath,"w") as f:
+        f.write(str(signup_obj))
+    else:
+      confirmationEmail = emailFields()
+      confirmationEmail["subject"] = "Signup already exists"
+      confirmationEmail["sender"] = signup_obj.emailTo
+      confirmationEmail["body"] = "Hello {},\n\nYou have already been signed up for emails from {}. If you did not request this, please respond immediately to this email. I will manually review this, as this is a beta system and does not have a unsubscribe feature\n\nBest,\n{}".format(signup_obj.name,signup_obj.emailFrom,teamName)
+      mailPool.append(confirmationEmail)
+      continue
+    
+    # send email on successful signup
+    confirmationEmail = emailFields()
+    confirmationEmail["subject"] = "Signup Confirmation"
+    confirmationEmail["sender"] = signup_obj.emailTo
+    confirmationEmail["body"] = "Hello {},\n\nYou have been signed up for emails from {}. If you did not request this, please respond immediately to this email. I will manually review this, as this is a beta system and does not have a unsubscribe feature\n\nBest,\n{}".format(signup_obj.name,signup_obj.emailFrom,teamName)
+    mailPool.append(confirmationEmail)
+    newSignup = True
   
-  return True
+  return newSignup

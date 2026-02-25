@@ -197,11 +197,11 @@ def createEvent(mail: emailFields) -> bool:
   
   event_obj = event(mail["description"],startTime,endTime,mail["name"],mail["location"],mail["sender"],mail["eventLink"],mail["ticketlink"])
   
-  os.makedirs("./validEvents/{}".format(mail["sender"]), exist_ok=True)
   stringValue = str(event_obj)
   fileName = str(hash(stringValue))[1:11]
   
   savePath = os.path.join(saveDestination,eventDestination,mail["sender"], fileName)
+  os.makedirs(savePath, exist_ok=True)
   
   with open(savePath, "w+") as f:
     f.write(stringValue)

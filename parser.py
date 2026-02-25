@@ -1,5 +1,4 @@
-from email_service.emailLib import emailHandler
-from email_service.emailReader import email
+from email_service.emailLib import emailHandler, email
 from event import createEvent
 from shared import *
 from help import handleHelpEmail

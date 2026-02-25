@@ -1,5 +1,5 @@
 from parser import parseEmailList, unlockEmailService, updatePassPhrases,readInbox,forgetPassPhrases, validateEmailList, handleEmailList, lockEmailService
-from email_service.emailReader import email
+from email_service.emailLib import email
 from shared import emailFields as EmailFields
 
 def parseInbox(keyLocation:str | None, logOutOnFinish: bool = True, unreadOnly:bool=True, markReadOnSuccess: bool = True, markReadOnFailure: bool = False, saveDestination:str = ".") -> None:
