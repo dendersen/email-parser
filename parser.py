@@ -98,13 +98,14 @@ def handleEmail(emailContent:emailFields, prevalidated: bool = False) -> bool:
   if not prevalidated and validateEmail(emailContent):
     prevalidated = True
   
-  if emailContent["subject"].startswith("event") and prevalidated:
-    return createEvent(emailContent)
+  handled = False
   
-  if emailContent["subject"].startswith("help"):
-    return handleHelpEmail(emailContent,__emailService)
+  if prevalidated:
+    handled |= createEvent(emailContent)
+    
+  handled |= handleHelpEmail(emailContent,__emailService)
   
-  return False #no other email types are supported yet
+  return handled #no other email types are supported yet
 
 def validateEmail(emailContent:emailFields) -> bool:
   if  "sender" not in emailContent or "id" not in emailContent or "subject" not in emailContent:

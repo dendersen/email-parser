@@ -1,3 +1,4 @@
+from email_service.emailLib import emailHandler
 from shared import *
 import os
 
@@ -16,7 +17,7 @@ class signup:
     out += self.emailFrom
     return out.strip()
 
-def checkSignup(mail: emailFields, mailPool:list[emailFields]) -> bool:
+def checkSignup(mail: emailFields, emailService: emailHandler) -> bool:
   if not mail["subject"].lower().startswith("signup"):
     return False
   
@@ -66,20 +67,20 @@ def checkSignup(mail: emailFields, mailPool:list[emailFields]) -> bool:
     if not os.path.isfile(fullPath):
       with open(fullPath,"w") as f:
         f.write(str(signup_obj))
-    else:
-      confirmationEmail = emailFields()
-      confirmationEmail["subject"] = "Signup already exists"
-      confirmationEmail["sender"] = signup_obj.emailTo
-      confirmationEmail["body"] = "Hello {},\n\nYou have already been signed up for emails from {}. If you did not request this, please respond immediately to this email. I will manually review this, as this is a beta system and does not have a unsubscribe feature\n\nBest,\n{}".format(signup_obj.name,signup_obj.emailFrom,teamName)
-      mailPool.append(confirmationEmail)
-      continue
-    
     # send email on successful signup
-    confirmationEmail = emailFields()
-    confirmationEmail["subject"] = "Signup Confirmation"
-    confirmationEmail["sender"] = signup_obj.emailTo
-    confirmationEmail["body"] = "Hello {},\n\nYou have been signed up for emails from {}. If you did not request this, please respond immediately to this email. I will manually review this, as this is a beta system and does not have a unsubscribe feature\n\nBest,\n{}".format(signup_obj.name,signup_obj.emailFrom,teamName)
-    mailPool.append(confirmationEmail)
-    newSignup = True
+      
+      emailService.sendEmails(
+        "Signup Confirmation",
+        "Hello {},\n\nYou have been signed up for emails from {}. If you did not request this, please respond immediately to this email. I will manually review this, as this is a beta system and does not have a unsubscribe feature\n\nBest,\n{}".format(signup_obj.name,signup_obj.emailFrom,teamName),
+        signup_obj.emailTo
+        )
+      newSignup = True
+    else:
+      # send email if signup already exists
+      emailService.sendEmails(
+        "Signup already exists",
+        "Hello {},\n\nYou have already been signed up for emails from {}. If you did not request this, please respond immediately to this email. I will manually review this, as this is a beta system and does not have a unsubscribe feature\n\nBest,\n{}".format(signup_obj.name,signup_obj.emailFrom,teamName),
+        signup_obj.emailTo
+        )
   
   return newSignup
